@@ -1,0 +1,24 @@
+---
+on:
+  schedule:
+    - cron: "30 9 * * *" # 4:30 PM Asia/Bangkok
+  workflow_dispatch:
+
+jobs:
+  send-alert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4.6.1
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install requirements
+        run: |
+          pip install -r requirements.txt
+      - name: Send notifications
+        env:
+          LINE_TOKEN: ${{ secrets.LINE_TOKEN }}
+        run: |
+          python3 family_alerts/02.2_dinner_update_granny.py
