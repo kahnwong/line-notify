@@ -1,7 +1,8 @@
-# Family Alerts
+# LINE Notify
 
-## Build
+
+## Usage
 
 ```bash
-docker build -t harbor.karnwong.me/family-alerts/family-alerts:latest .
+python3 line_notify/main.py --message "Hello world"
 ```
