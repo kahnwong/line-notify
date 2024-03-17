@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "family-alerts"
+name = "line-notify"
 version = "0.1.0"
 description = ""
 authors = ["Karn Wong <karn@karnwong.me>"]
