@@ -1,9 +1,20 @@
-FROM python:3.11
+FROM golang:1.22-alpine AS build-stage
 
 WORKDIR /app
 
-COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r requirements.txt
+COPY go.mod go.sum ./
+RUN go mod download
 
-COPY . /app/
-RUN pip install -e .
+COPY . ./
+
+RUN CGO_ENABLED=0 go build -o /line-notify
+
+FROM alpine:latest AS build-release-stage
+
+WORKDIR /
+
+COPY --from=build-stage /line-notify /line-notify
+
+RUN chmod +x /line-notify
+
+ENTRYPOINT ["/line-notify"]
