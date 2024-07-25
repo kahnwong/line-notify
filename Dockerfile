@@ -7,7 +7,7 @@ RUN go mod download
 
 COPY . ./
 
-RUN CGO_ENABLED=0 go build -o /line-notify
+RUN CGO_ENABLED=0 go build -ldflags "-w -s" -o /line-notify
 
 FROM alpine:latest AS build-release-stage
 
