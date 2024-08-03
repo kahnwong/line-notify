@@ -11,10 +11,11 @@ import (
 	"os"
 
 	"github.com/carlmjohnson/requests"
-
-	"github.com/joho/godotenv"
+	_ "github.com/joho/godotenv/autoload"
 	"github.com/spf13/cobra"
 )
+
+var lineToken = os.Getenv("LINE_TOKEN")
 
 type lineNotifyResponse struct {
 	Status  int    `json:"status"`
@@ -49,14 +50,6 @@ func notify(lineToken string, message string) {
 var rootCmd = &cobra.Command{
 	Use: "line-notify",
 	Run: func(cmd *cobra.Command, args []string) {
-		// init env
-		err := godotenv.Load()
-		if err != nil {
-			fmt.Println("Loading env from env var instead...")
-		}
-		lineToken := os.Getenv("LINE_TOKEN")
-
-		// main
 		notify(lineToken, args[0])
 	},
 }
