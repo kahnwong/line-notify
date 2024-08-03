@@ -4,14 +4,13 @@ Copyright © 2024 Karn Wong <karn@karnwong.me>
 package cmd
 
 import (
-	"bytes"
-	"encoding/json"
+	"context"
 	"fmt"
-	"io"
-	"log/slog"
-	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
+
+	"github.com/carlmjohnson/requests"
 
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
@@ -23,45 +22,21 @@ type lineNotifyResponse struct {
 }
 
 func notify(lineToken string, message string) {
-	url := "https://notify-api.line.me/api/notify"
-	method := "POST"
+	body := url.Values{"message": {message}}
 
-	payload := &bytes.Buffer{}
-	writer := multipart.NewWriter(payload)
-	_ = writer.WriteField("message", message)
-	err := writer.Close()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	client := &http.Client{}
-	req, err := http.NewRequest(method, url, payload)
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", lineToken))
-
-	req.Header.Set("Content-Type", writer.FormDataContentType())
-	res, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	// decode
 	var response lineNotifyResponse
-	if err := json.Unmarshal(body, &response); err != nil {
-		slog.Error("Can not unmarshal JSON")
+	err := requests.
+		URL("https://notify-api.line.me").
+		Method(http.MethodPost).
+		Path("api/notify").
+		BodyForm(body).
+		Header("Authorization", fmt.Sprintf("Bearer %s", lineToken)).
+		Header("Content-Type", "application/x-www-form-urlencoded").
+		ToJSON(&response).
+		Fetch(context.Background())
+
+	if err != nil {
+		fmt.Println(err)
 	}
 
 	if response.Status == 200 {
@@ -69,7 +44,6 @@ func notify(lineToken string, message string) {
 	} else {
 		fmt.Println(response.Message)
 	}
-
 }
 
 var rootCmd = &cobra.Command{
