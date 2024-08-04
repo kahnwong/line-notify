@@ -12,6 +12,7 @@ import (
 
 	"github.com/carlmjohnson/requests"
 	_ "github.com/joho/godotenv/autoload"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -37,13 +38,13 @@ func notify(lineToken string, message string) {
 		Fetch(context.Background())
 
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal().Err(err).Msg("Failed to notify")
 	}
 
 	if response.Status == 200 {
-		fmt.Println("Successfully notified line")
+		log.Info().Msgf("Successfully notified line: %s", message)
 	} else {
-		fmt.Println(response.Message)
+		log.Error().Msg(response.Message)
 	}
 }
 
