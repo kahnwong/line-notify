@@ -4,55 +4,16 @@ Copyright © 2024 Karn Wong <karn@karnwong.me>
 package cmd
 
 import (
-	"context"
-	"fmt"
-	"net/http"
-	"net/url"
 	"os"
 
-	"github.com/carlmjohnson/requests"
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
-var lineToken = os.Getenv("LINE_TOKEN")
-
-type lineNotifyResponse struct {
-	Status  int    `json:"status"`
-	Message string `json:"message"`
-}
-
-func notify(lineToken string, message string) {
-	body := url.Values{"message": {message}}
-
-	var response lineNotifyResponse
-	err := requests.
-		URL("https://notify-api.line.me").
-		Method(http.MethodPost).
-		Path("api/notify").
-		BodyForm(body).
-		Header("Authorization", fmt.Sprintf("Bearer %s", lineToken)).
-		Header("Content-Type", "application/x-www-form-urlencoded").
-		ToJSON(&response).
-		Fetch(context.Background())
-
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to notify")
-	}
-
-	if response.Status == 200 {
-		log.Info().Msgf("Successfully notified line: %s", message)
-	} else {
-		log.Error().Msg(response.Message)
-	}
-}
-
 var rootCmd = &cobra.Command{
 	Use: "line-notify",
-	Run: func(cmd *cobra.Command, args []string) {
-		notify(lineToken, args[0])
-	},
+	//Run: func(cmd *cobra.Command, args []string) {
+	//},
 }
 
 func Execute() {
