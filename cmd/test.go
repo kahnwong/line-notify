@@ -30,7 +30,7 @@ func notifyTest(message string) {
 		Fetch(context.Background())
 
 	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to notify")
+		log.Fatal().Msg("Failed to notify")
 	}
 }
 
