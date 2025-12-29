@@ -9,12 +9,9 @@ COPY . ./
 
 RUN CGO_ENABLED=0 go build -ldflags "-w -s" -o /line-notify
 
-FROM alpine:latest AS build-release-stage
+FROM gcr.io/distroless/static-debian13:nonroot AS build-release-stage
 
 WORKDIR /
-
 COPY --from=build-stage /line-notify /line-notify
-
-RUN chmod +x /line-notify
 
 ENTRYPOINT ["/line-notify"]
