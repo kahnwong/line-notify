@@ -3,7 +3,7 @@ module github.com/kahnwong/line-notify
 go 1.27.0
 
 require (
-	github.com/carlmjohnson/requests v0.26.1
+	github.com/carlmjohnson/requests v0.26.2
 	github.com/joho/godotenv v1.5.1
 	github.com/rs/zerolog v1.35.1
 	github.com/spf13/cobra v1.10.2
